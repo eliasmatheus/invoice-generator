@@ -6,10 +6,6 @@ from docx2pdf import convert
 
 from docx_replace import docx_replace
 
-import sys
-
-print(sys.argv)
-
 invoiceNumber = '012'
 invoiceMonth = 'January'
 invoiceDay = '31'
