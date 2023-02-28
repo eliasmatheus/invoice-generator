@@ -6,9 +6,9 @@ from docx2pdf import convert
 
 from docx_replace import docx_replace
 
-invoiceNumber = '012'
-invoiceMonth = 'January'
-invoiceDay = '31'
+invoiceNumber = '013'
+invoiceMonth = 'February'
+invoiceDay = '28'
 invoiceYear = '2023'
 
 invoiceDate = f'{invoiceMonth} {invoiceDay}, {invoiceYear}'
@@ -26,11 +26,19 @@ outlook = app('Microsoft Outlook')
 p = Path('result/invoice.pdf')
 p = Alias(str(p))
 
+content = f'Hello.<br><br>I hope you\'re well.' \
+          f'<br><br>Please find attached the invoice number {invoiceNumber} for Base Pay for {invoiceMonth}, {invoiceYear}.'
+
+signature = '<br><br><small>Kind regards,</small>' \
+            '<br><strong>Elias Matheus Melo de Oliveira</strong>' \
+            '<br><small>Founder <strong>Olitech</strong></small>' \
+            '<br><small>+55 21 99988-7172</small>'
+
 msg = outlook.make(
     new=k.outgoing_message,
     with_properties={
-        k.subject: f'Invoice for {invoiceMonth} - {invoiceYear}',
-        k.plain_text_content: 'Hello. \nPlease find attached invoice'})
+        k.subject: f'Invoice {invoiceNumber} for {invoiceMonth} - {invoiceYear}',
+        k.content: content + signature})
 
 msg.make(
     new=k.recipient,
@@ -47,4 +55,3 @@ msg.make(
 
 msg.open()
 msg.activate()
-
