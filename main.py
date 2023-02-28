@@ -16,14 +16,14 @@ invoiceDate = f'{invoiceMonth} {invoiceDay}, {invoiceYear}'
 # usage
 doc = Document('./template/template.docx')
 docx_replace(doc, dict(InvoiceNumber=invoiceNumber, InvoiceDate=invoiceDate, InvoiceMonth=invoiceMonth))
-doc.save('result/invoice.docx')
+doc.save(f'result/invoice-{invoiceNumber}-{invoiceYear}.docx')
 
 # convert to PDF
-convert("result/invoice.docx", "result/invoice.pdf")
+convert(f"result/invoice-{invoiceNumber}-{invoiceYear}.docx", f"result/invoice-{invoiceNumber}-{invoiceYear}.pdf")
 
 outlook = app('Microsoft Outlook')
 
-p = Path('result/invoice.pdf')
+p = Path(f'result/invoice-{invoiceNumber}-{invoiceYear}.pdf')
 p = Alias(str(p))
 
 content = f'Hello.<br><br>I hope you\'re well.' \
