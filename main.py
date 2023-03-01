@@ -4,48 +4,65 @@ from mactypes import Alias
 from pathlib import Path
 from docx2pdf import convert
 
-from docx_replace import docx_replace
+from functions.docx_replace import docx_replace
+from models.contact import Contact
+from models.invoice import Invoice
+from models.outgoing_message import OutgoingMessage
+from models.sender import Sender
 
-invoiceNumber = '013'
-invoiceMonth = 'February'
-invoiceDay = '28'
-invoiceYear = '2023'
 
-invoiceDate = f'{invoiceMonth} {invoiceDay}, {invoiceYear}'
+# Modifique apenas abaixo dessa linha
+invoice = Invoice(13, 2023, 'February', 28)
+sender = Sender(
+    'Elias Matheus Melo de Oliveira',
+    'eliasmatheus@hotmail.com',
+    'Founder',
+    'OLITECH LTDA',
+    '+55 21 99988-7172')
+recipient = Contact('Payments Rainforest', 'payment@rainforest.tech')
+
+# Modifique apenas acima dessa linha
+
+
+results_path = 'result/invoice'
 
 # usage
 doc = Document('./template/template.docx')
-docx_replace(doc, dict(InvoiceNumber=invoiceNumber, InvoiceDate=invoiceDate, InvoiceMonth=invoiceMonth))
-doc.save(f'result/invoice-{invoiceNumber}-{invoiceYear}.docx')
+docx_replace(doc, dict(
+    InvoiceNumber=invoice.number,
+    InvoiceDate=invoice.date,
+    InvoiceMonth=invoice.month))
+doc.save(f'{results_path}-{invoice.number}-{invoice.year}.docx')
 
 # convert to PDF
-convert(f"result/invoice-{invoiceNumber}-{invoiceYear}.docx", f"result/invoice-{invoiceNumber}-{invoiceYear}.pdf")
+convert(
+    f"{results_path}-{invoice.number}-{invoice.year}.docx",
+    f"{results_path}-{invoice.number}-{invoice.year}.pdf")
 
 outlook = app('Microsoft Outlook')
 
-p = Path(f'result/invoice-{invoiceNumber}-{invoiceYear}.pdf')
+p = Path(f'{results_path}-{invoice.number}-{invoice.year}.pdf')
 p = Alias(str(p))
 
-content = f'Hello.<br><br>I hope you\'re well.' \
-          f'<br><br>Please find attached the invoice number {invoiceNumber} for Base Pay for {invoiceMonth}, {invoiceYear}.'
 
-signature = '<br><br><small>Kind regards,</small>' \
-            '<br><strong>Elias Matheus Melo de Oliveira</strong>' \
-            '<br><small>Founder <strong>Olitech</strong></small>' \
-            '<br><small>+55 21 99988-7172</small>'
+outgoing_message = OutgoingMessage(invoice, sender)
+content = outgoing_message.get_content()
+signature = outgoing_message.get_signature()
+subject = outgoing_message.get_subject()
+
 
 msg = outlook.make(
     new=k.outgoing_message,
     with_properties={
-        k.subject: f'Invoice {invoiceNumber} for {invoiceMonth} - {invoiceYear}',
+        k.subject: subject,
         k.content: content + signature})
 
 msg.make(
     new=k.recipient,
     with_properties={
         k.email_address: {
-            k.name: 'Payments Rainforest',
-            k.address: 'payment@rainforest.tech'}})
+            k.name: recipient.name,
+            k.address: recipient.email}})
 
 msg.make(
     new=k.attachment,

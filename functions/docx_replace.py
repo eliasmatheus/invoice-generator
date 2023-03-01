@@ -7,6 +7,7 @@ from pathlib import Path
 # The following code is a derivative work of the code from adejones:
 # https://gist.github.com/adejones/a6d42984f66ea9990d78974531863bee
 
+
 def docx_replace(doc, data):
     paragraphs = list(doc.paragraphs)
     for t in doc.tables:
@@ -16,7 +17,8 @@ def docx_replace(doc, data):
                     paragraphs.append(paragraph)
     for p in paragraphs:
         for key, val in data.items():
-            key_name = '${{{}}}'.format(key)  # use placeholders in the form ${PlaceholderName}
+            # use placeholders in the form ${PlaceholderName}
+            key_name = '${{{}}}'.format(key)
             if key_name in p.text:
                 inline = p.runs
                 # Replace strings and retain the same style.
@@ -33,7 +35,8 @@ def docx_replace(doc, data):
 
                     # case 1: found in single run so short circuit the replace
                     if key_name in inline[i].text and not started:
-                        found_runs.append((i, inline[i].text.find(key_name), len(key_name)))
+                        found_runs.append(
+                            (i, inline[i].text.find(key_name), len(key_name)))
                         text = inline[i].text.replace(key_name, str(val))
                         inline[i].text = text
                         replace_done = True
@@ -86,9 +89,11 @@ def docx_replace(doc, data):
                     for i, item in enumerate(found_runs):
                         index, start, length = [t for t in item]
                         if i == 0:
-                            text = inline[index].text.replace(inline[index].text[start:start + length], str(val))
+                            text = inline[index].text.replace(
+                                inline[index].text[start:start + length], str(val))
                             inline[index].text = text
                         else:
-                            text = inline[index].text.replace(inline[index].text[start:start + length], '')
+                            text = inline[index].text.replace(
+                                inline[index].text[start:start + length], '')
                             inline[index].text = text
             # print(p.text)
