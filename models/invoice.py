@@ -1,6 +1,6 @@
 
 class Invoice:
-    def __init__(self, number: int, year: int, month: str, day: int):
+    def __init__(self, number: str, year: int, month: str, day: int):
         self.number = number
         self.year = year
         self.month = month
