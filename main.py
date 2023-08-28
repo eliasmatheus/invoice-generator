@@ -12,7 +12,7 @@ from models.sender import Sender
 
 
 # Modifique apenas abaixo dessa linha
-invoice = Invoice('015', 2023, 'April', 29)
+invoice = Invoice('019', 2023, 'August', 28, 'U$ 2,166.67')
 sender = Sender(
     'Elias Matheus Melo de Oliveira',
     'eliasmatheus@hotmail.com',
@@ -31,7 +31,8 @@ doc = Document('./template/template.docx')
 docx_replace(doc, dict(
     InvoiceNumber=invoice.number,
     InvoiceDate=invoice.date,
-    InvoiceMonth=invoice.month))
+    InvoiceMonth=invoice.month,
+    InvoiceValue=invoice.value,))
 doc.save(f'{results_path}-{invoice.number}-{invoice.year}.docx')
 
 # convert to PDF
